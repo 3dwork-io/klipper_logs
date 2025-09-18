@@ -70,17 +70,21 @@ jobs:
 
       - name: Commit and push
         run: |
+          set -e
           git status --porcelain
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
+          # Stage first to avoid unstaged changes blocking rebase
           git add CHANGELOG.md
-          # Commit only if there are staged changes (handles untracked files too)
+          # Commit only if there are staged changes
           if git diff --cached --quiet; then
             echo "No changelog changes to commit."
             exit 0
           fi
           git commit -m "chore(changelog): update for ${GITHUB_SHA::7} [skip ci]"
-          git push
+          # Rebase with autostash to handle concurrent changes
+          git pull --rebase --autostash || true
+          # Push (retry once if needed)
+          git push || (git pull --rebase --autostash && git push)
 
 
