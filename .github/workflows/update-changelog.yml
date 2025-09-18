@@ -61,6 +61,13 @@ jobs:
           echo "CHANGELOG.md preview:"
           sed -n '1,120p' CHANGELOG.md || true
 
+      - name: Show workspace layout (post-change)
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          echo "Repository tree (2 levels) after changes:"
+          tree -L 2 || true
+
       - name: Commit and push
         run: |
           git status --porcelain
