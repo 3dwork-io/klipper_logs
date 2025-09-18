@@ -1519,8 +1519,8 @@ async def handle_getlogdev(request: web.Request) -> web.StreamResponse:
   
 async def handle_lang(request: web.Request) -> web.StreamResponse:
   lang = request.match_info.get("lang", "en")
-#  if not os.path.exists(f'index_{lang}.json'):
-#    lang = 'en'
+  if not os.path.exists(f'index_{lang}.json'):
+    lang = 'en'
   return web.FileResponse(f'index_{lang}.json', chunk_size=256 * 1024)
 
 def sizeof_fmt(num, suffix="B"):
