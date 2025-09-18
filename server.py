@@ -173,8 +173,8 @@ def add_mcu_chart(keys, data, title='MCU bandwidth and load utilization'):
       if st - basetime < 15.:
         load = 0.
 
-      pt = float(d['sysinfo:print_time'])
-      hb = float(d['sysinfo:buffer_time'])
+      pt = float(d.get('sysinfo:print_time', 0.0))
+      hb = float(d.get('sysinfo:buffer_time', 0.0))
       if hb >= MAXBUFFER or st in sample_resets:
         hb = 0.
       else:
@@ -770,7 +770,7 @@ return () => {
   ln = 0
 
   for binline in file:
-    line = binline.decode().rstrip('\n')
+    line = binline.decode(errors='ignore').rstrip('\n')
     hline = html.escape(line)
 
     if '.crealityprint' in line:
@@ -961,7 +961,9 @@ return () => {
             item[f'{name}:{key}'] = value
             mcu_stats += f'{key}: {v} '
 
-      print_offset = st - (round(float(item['sysinfo:print_time']) * 100) / 100)
+      # Some Stats lines may lack print_time early in logs; guard to avoid KeyError
+      if 'sysinfo:print_time' in item:
+        print_offset = st - (round(float(item['sysinfo:print_time']) * 100) / 100)
 
       if 'sysinfo:cputime' in item:
         if len(mcu_data) > 0:
@@ -1648,6 +1650,11 @@ _100MB = 1024 * 1024 * 100
 
 async def upload_log(request: web.Request) -> web.StreamResponse:
   logging.info('serrving upload file\n')
+  # Ensure cache directory exists
+  try:
+    os.makedirs('cache', exist_ok=True)
+  except Exception as e:
+    logging.warn(f'cannot create cache dir: {e}')
   reader = await request.multipart()
 
   digest = ''
@@ -1854,6 +1861,13 @@ def run(port=8998):
       web.get("//getlogs", handle_getlogs),
       web.get("/getlogdev", handle_getlogdev),
       web.get("//getlogdev", handle_getlogdev),
+      # Support /klipper_logs prefix used in generated links
+      web.get("/klipper_logs", handle_index),
+      web.get("/klipper_logs/", handle_index),
+      web.get("/klipper_logs/{name}.log", handle_log_static),
+      web.get("/klipper_logs//{name}.log", handle_log_static),
+      web.get("/klipper_logs/{name}", handle_log),
+      web.get("/klipper_logs//{name}", handle_log),
       web.get("/{name}.log", handle_log_static),
       web.get("//{name}.log", handle_log_static),
       web.get("/index_{lang}.json", handle_lang),
