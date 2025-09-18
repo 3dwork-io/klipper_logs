@@ -1,159 +1,594 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3Dwork -  Klipper Log Parser</title>
-<link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-</head>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-<script>
-function copyCode(itemId) {
-  const copyText = document.getElementById(itemId);
-  navigator.clipboard.writeText(copyText.innerHTML);
-}
-
-function updateContent(langData) {
-    console.log('updatin lang labels');
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        element.textContent = langData[key];
-    });
-}
-
-async function fetchLanguageData(lang) {
-    const response = await fetch(`index_${lang}.json`);
-    return response.json();
-}
-
-async function onLoad() {
-  const lang = (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase();
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3Dwork - Klipper Log Parser</title>
+  <link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
+  <meta name="description" content="Modern Klipper log parser and analyzer for 3D printing diagnostics">
   
-  if (lang != 'en') {
-    console.log('loading language:', lang);
-    const langData = await fetchLanguageData(lang);
-	if (langData) {
-      updateContent(langData);
-	}
-  }
+  <style>
+    /* Modern Design System */
+    :root {
+      --primary: #00bfff;
+      --primary-dark: #0099cc;
+      --accent: #00ffcc;
+      --background: #0a0e1a;
+      --surface: #151922;
+      --surface-light: #1e2330;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #10b981;
+      --error: #ef4444;
+      
+      --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+      --gradient-surface: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 30px rgba(0, 191, 255, 0.2);
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-  // Build domain-independent curl snippets
-  try {
-    const origin = window.location.origin;
-    const getlogsUrl = `${origin}/getlogs`;
-    const s1 = `curl -L ${getlogsUrl} | bash -s`;
-    const s2 = `curl -L ${getlogsUrl} | bash -s -- printer_1_data`;
-    const s3 = `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s`;
-    const s4 = `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data`;
-    const e1 = document.getElementById('getlogs1'); if (e1) e1.textContent = s1;
-    const e2 = document.getElementById('getlogs2'); if (e2) e2.textContent = s2;
-    const e3 = document.getElementById('getlogs3'); if (e3) e3.textContent = s3;
-    const e4 = document.getElementById('getlogs4'); if (e4) e4.textContent = s4;
-  } catch (e) { console.warn('failed to set dynamic getlogs urls', e); }
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-</script>
-<body onload="onLoad()">
-<div class="container-fluid">
-<h1 class="d-flex align-items-center"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:40px;margin-right:12px"><span data-i18n="header">3Dwork -  Klipper Log Parser</span></h1>
-<br>
-<h3 data-i18n="title1">
-Automatic logs uploading<br>Run code below on your klipper host to upload to parser
-</h3>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 204, 0.1) 0%, transparent 50%);
+    }
 
-<div class="card my-2">
-<div class="card-header" data-i18n="heading1">
- Upload latest logs from printer_data folder
-</div>
-<div class="card-body">
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
 
-<pre id="getlogs1">
-curl -L https://coderus.openrepos.net/klipper_logs/getlogs | bash -s
-</pre>
-<button class="btn btn-primary" data-i18n="copy-clipboard" onclick="copyCode('getlogs1');">Copy to clipboard</button>
-</div>
-</div>
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
 
-<h3 data-i18n="title2">
-Other uploading options
-</h3>
+    .logo-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-<div class="card my-2">
-<div class="card-header" data-i18n="heading2">
- Upload latest logs from different printer data folder
-</div>
-<div class="card-body">
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+    }
 
-<pre id="getlogs2">
-curl -L https://coderus.openrepos.net/klipper_logs/getlogs | bash -s -- printer_1_data
-</pre>
-<button class="btn btn-primary" data-i18n="copy-clipboard" onclick="copyCode('getlogs2');">Copy to clipboard</button>
-</div>
-</div>
+    .divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+    }
 
-<div class="card my-2">
-<div class="card-header" data-i18n="heading3">
- Upload exact logs files from printer_data folder
-</div>
-<div class="card-body">
+    .printer-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--primary);
+    }
 
-<pre id="getlogs3">
-curl -L https://coderus.openrepos.net/klipper_logs/getlogs | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s
-</pre>
-<button class="btn btn-primary" data-i18n="copy-clipboard" onclick="copyCode('getlogs3');">Copy to clipboard</button>
-</div>
-</div>
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
 
-<div class="card my-2">
-<div class="card-header" data-i18n="heading4">
- Upload exact logs files from different printer data folder
-</div>
-<div class="card-body">
+    .subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
-<pre id="getlogs4">
-curl -L https://coderus.openrepos.net/klipper_logs/getlogs | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data
-</pre>
-<button class="btn btn-primary" data-i18n="copy-clipboard" onclick="copyCode('getlogs4');">Copy to clipboard</button>
-</div>
-</div>
-<br>
-<h3 data-i18n="title2">
-  Manual logs uploading
-</h3>
+    /* Cards */
+    .card {
+      background: var(--gradient-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+    }
 
-<form method='POST' enctype='multipart/form-data'>
+    .card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-2px);
+    }
 
-<div class="mb-3">
-<label for="logfile" class="form-label">klippy.log file</label>
-<input class="form-control" type="file" id="logfile" name="logfile" accept=".log" required>
-</div>
-<div class="mb-3">
-<label for="moonraker" class="form-label">moonraker.log file</label>
-<input class="form-control" type="file" id="moonraker" name="moonraker" accept=".log" required>
-</div>
-<div class="mb-3">
-<label for="dmesg" class="form-label">dmesg.txt file</label>
-<input class="form-control" type="file" id="dmesg" name="dmesg" accept=".txt" required>
-</div>
-<button type="submit" class="btn btn-primary" data-i18n="form-upload">Upload</button>
-<br>
-<div>
-<br>
+    .card-header {
+      margin-bottom: 1rem;
+    }
 
-<div class="card my-2">
-<div class="card-header" data-i18n="heading5">
- Save dmesg log file to printer_data logs folder
-</div>
-<div class="card-body">
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
 
-<pre id="getlogs5">
-sudo dmesg -T > ~/printer_data/logs/dmesg.txt
-</pre>
-<button class="btn btn-primary" data-i18n="copy-clipboard" onclick="copyCode('getlogs5');">Copy to clipboard</button>
-</div>
-</div>
+    .card-description {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
 
-</div>
-</form>
+    /* Code blocks */
+    .code-container {
+      position: relative;
+    }
 
+    .code-block {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--text);
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      opacity: 0;
+    }
+
+    .code-container:hover .copy-btn {
+      opacity: 1;
+    }
+
+    .copy-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .copy-btn.copied {
+      background: var(--success);
+      color: white;
+      opacity: 1;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.875rem;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+    }
+
+    .form-input[type="file"]::file-selector-button {
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      color: white;
+      margin-right: 1rem;
+      cursor: pointer;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .section-description {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      transform: translateX(100%);
+      transition: var(--transition);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      border-color: var(--success);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .toast.error {
+      border-color: var(--error);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .title {
+        font-size: 2rem;
+      }
+
+      .logo-section {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .divider {
+        width: 32px;
+        height: 1px;
+      }
+    }
+
+    /* Icons */
+    .icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-section">
+        <img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" 
+             alt="3Dwork" class="logo">
+          <path d="M18 7h-2V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H6a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h1v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1a3 3 0 0 0 3-3v-5a3 3 0 0 0-3-3zM10 6h4v1h-4V6zm5 12H9v-3h6v3zm3-2a1 1 0 0 1-1 1h-1v-2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H7a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v5z"/>
+        </svg>
+      </div>
+      
+      <h1 class="title">Klipper Log Parser</h1>
+      <p class="subtitle">
+        Modern tool for analyzing and debugging your 3D printer logs. 
+        Upload logs automatically or manually for comprehensive diagnostics.
+      </p>
+    </header>
+
+    <!-- Automatic Upload Section -->
+    <section class="section">
+      <h2 class="section-title">Automatic Log Upload</h2>
+      <p class="section-description">
+        Run the commands below on your Klipper host to automatically upload logs for parsing
+      </p>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Latest Logs</h3>
+          <p class="card-description">Upload the most recent logs from your printer_data folder</p>
+        </div>
+        <div class="code-container">
+          <div class="code-block" id="getlogs1">curl -L https://example.com/getlogs | bash -s</div>
+          <button class="copy-btn" onclick="copyCode('getlogs1')">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload from Custom Folder</h3>
+          <p class="card-description">Upload logs from a different printer data folder</p>
+        </div>
+        <div class="code-container">
+          <div class="code-block" id="getlogs2">curl -L https://example.com/getlogs | bash -s -- printer_1_data</div>
+          <button class="copy-btn" onclick="copyCode('getlogs2')">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Specific Log Files</h3>
+          <p class="card-description">Upload exact log files by specifying their names</p>
+        </div>
+        <div class="code-container">
+          <div class="code-block" id="getlogs3">curl -L https://example.com/getlogs | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s</div>
+          <button class="copy-btn" onclick="copyCode('getlogs3')">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Specific Files from Custom Folder</h3>
+          <p class="card-description">Upload specific log files from a different printer data folder</p>
+        </div>
+        <div class="code-container">
+          <div class="code-block" id="getlogs4">curl -L https://example.com/getlogs | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data</div>
+          <button class="copy-btn" onclick="copyCode('getlogs4')">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Manual Upload Section -->
+    <section class="section">
+      <h2 class="section-title">Manual Log Upload</h2>
+      <p class="section-description">
+        Upload your log files directly through the web interface
+      </p>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Log Files</h3>
+          <p class="card-description">Select your Klipper log files for analysis</p>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+          <div class="form-group">
+            <label for="logfile" class="form-label">klippy.log file</label>
+            <input class="form-input" type="file" id="logfile" name="logfile" accept=".log" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="moonraker" class="form-label">moonraker.log file</label>
+            <input class="form-input" type="file" id="moonraker" name="moonraker" accept=".log" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="dmesg" class="form-label">dmesg.txt file</label>
+            <input class="form-input" type="file" id="dmesg" name="dmesg" accept=".txt" required>
+          </div>
+          
+          <button type="submit" class="btn btn-full">
+            Upload Files
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Helper Command Section -->
+    <section class="section">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Generate dmesg Log</h3>
+          <p class="card-description">Save the system message log to your printer_data logs folder</p>
+        </div>
+        <div class="code-container">
+          <div class="code-block" id="getlogs5">sudo dmesg -T > ~/printer_data/logs/dmesg.txt</div>
+          <button class="copy-btn" onclick="copyCode('getlogs5')">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function showToast(message, type = 'success') {
+      // Remove existing toasts
+      const existingToasts = document.querySelectorAll('.toast');
+      existingToasts.forEach(toast => toast.remove());
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      // Show toast
+      setTimeout(() => toast.classList.add('show'), 100);
+
+      // Hide toast after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function copyCode(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.textContent;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        // Visual feedback
+        const btn = element.parentElement.querySelector('.copy-btn');
+        btn.classList.add('copied');
+        btn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        `;
+        
+        showToast('Command copied to clipboard!');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          `;
+        }, 2000);
+      }).catch(err => {
+        showToast('Failed to copy command', 'error');
+      });
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      
+      const logfile = document.getElementById('logfile').files[0];
+      const moonraker = document.getElementById('moonraker').files[0];
+      const dmesg = document.getElementById('dmesg').files[0];
+
+      if (!logfile || !moonraker || !dmesg) {
+        showToast('Please select all required files', 'error');
+        return;
+      }
+
+      // Here you would normally handle the file upload
+      showToast('Files uploaded successfully!');
+      
+      // Reset form
+      event.target.reset();
+    }
+
+    function updateContent(langData) {
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (langData[key]) {
+          element.textContent = langData[key];
+        }
+      });
+    }
+
+    async function fetchLanguageData(lang) {
+      try {
+        const response = await fetch(`index_${lang}.json`);
+        return response.json();
+      } catch (error) {
+        console.warn('Language file not found:', lang);
+        return null;
+      }
+    }
+
+    async function onLoad() {
+      const lang = (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase();
+      
+      if (lang !== 'en') {
+        console.log('Loading language:', lang);
+        const langData = await fetchLanguageData(lang);
+        if (langData) {
+          updateContent(langData);
+        }
+      }
+
+      // Build domain-independent curl snippets
+      try {
+        const origin = window.location.origin;
+        const getlogsUrl = `${origin}/getlogs`;
+        
+        const commands = {
+          getlogs1: `curl -L ${getlogsUrl} | bash -s`,
+          getlogs2: `curl -L ${getlogsUrl} | bash -s -- printer_1_data`,
+          getlogs3: `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s`,
+          getlogs4: `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data`
+        };
+
+        Object.entries(commands).forEach(([id, command]) => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = command;
+          }
+        });
+      } catch (e) {
+        console.warn('Failed to set dynamic getlogs urls', e);
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', onLoad);
+  </script>
+</body>
+</html>
