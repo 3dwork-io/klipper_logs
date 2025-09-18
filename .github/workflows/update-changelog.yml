@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,9 +26,9 @@ jobs:
           FROM_SHA="${{ github.event.before }}"
           TO_SHA="${{ github.sha }}"
           if [ -z "$FROM_SHA" ] || [ "$FROM_SHA" = "0000000000000000000000000000000000000000" ]; then
-            MESSAGES="$(git log -1 --pretty=format:'- %s')"
+            MESSAGES="$(git log -1 --pretty=format:'- (%an) %s')"
           else
-            MESSAGES="$(git log --pretty=format:'- %s' "${FROM_SHA}..${TO_SHA}")"
+            MESSAGES="$(git log --pretty=format:'- (%an) %s' "${FROM_SHA}..${TO_SHA}")"
           fi
           echo "messages<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGES" >> $GITHUB_OUTPUT
@@ -41,7 +42,7 @@ jobs:
             echo "" >> CHANGELOG.md
           fi
           {
-            echo "## ${DATE}"
+            echo "## ${DATE} — pushed by ${{ github.actor }}"
             echo "${{ steps.commits.outputs.messages }}"
             echo ""
           } >> CHANGELOG.md
