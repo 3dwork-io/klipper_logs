@@ -1,0 +1,61 @@
+name: Update Changelog
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  changelog:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect commit messages in this push
+        id: commits
+        run: |
+          FROM_SHA="${{ github.event.before }}"
+          TO_SHA="${{ github.sha }}"
+          if [ -z "$FROM_SHA" ] || [ "$FROM_SHA" = "0000000000000000000000000000000000000000" ]; then
+            MESSAGES="$(git log -1 --pretty=format:'- %s')"
+          else
+            MESSAGES="$(git log --pretty=format:'- %s' "${FROM_SHA}..${TO_SHA}")"
+          fi
+          echo "messages<<EOF" >> $GITHUB_OUTPUT
+          echo "$MESSAGES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Append to CHANGELOG.md
+        run: |
+          DATE="$(date +'%Y-%m-%d')"
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          {
+            echo "## ${DATE}"
+            echo "${{ steps.commits.outputs.messages }}"
+            echo ""
+          } >> CHANGELOG.md
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "No changelog changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(changelog): update for ${GITHUB_SHA::7} [skip ci]"
+          git push
+
+
