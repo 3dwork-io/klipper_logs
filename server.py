@@ -347,6 +347,7 @@ def process_logfile(digest, htmlfile):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3Dwork - Klipper Log Parser</title>
+<link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <style>
 div.code code::before {
@@ -638,6 +639,7 @@ return () => {
   </symbol>
 </svg>
 <div style="font-family:monospace" class="container-fluid">
+<h1 class="d-flex align-items-center" style="font-family:inherit;font-size:1.5rem;margin-top:1rem"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:32px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
 <p class="text-start">
 <a href="/klipper_logs">Home</a><br/>
 {expiration_line}
@@ -1540,6 +1542,7 @@ async def handle_list(request: web.Request) -> web.StreamResponse:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3Dwork - Klipper Log Parser</title>
+<link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
@@ -1548,6 +1551,7 @@ async def handle_list(request: web.Request) -> web.StreamResponse:
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <body>
 <div class="container-fluid">
+<h1 class="d-flex align-items-center" style="font-size:1.5rem;margin-top:1rem"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:32px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
 '''
 
   files = [f for f in os.listdir('cache') if f.endswith('.log') and not '_' in f]
