@@ -12,3 +12,6 @@
 ## 2025-09-18 — pushed by alienboyxp
 - (JJR3D) Updated UI
 
+## 2025-09-18 — pushed by alienboyxp
+- (JJR3D) Fixed UI issues
+
