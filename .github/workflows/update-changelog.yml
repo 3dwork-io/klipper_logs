@@ -14,6 +14,9 @@ jobs:
   changelog:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: klipper_logs
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,12 +52,14 @@ jobs:
 
       - name: Commit and push
         run: |
-          if git diff --quiet -- CHANGELOG.md; then
+          git status --porcelain
+          if git diff --quiet HEAD -- CHANGELOG.md; then
             echo "No changelog changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add CHANGELOG.md
           git commit -m "chore(changelog): update for ${GITHUB_SHA::7} [skip ci]"
           git push
