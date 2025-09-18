@@ -342,7 +342,7 @@ def process_logfile(digest, htmlfile):
   telegram_line = f'<a href="/klipper_logs/{telegram_name}">Download telegram logfile</a><br/>' if telegram_exists else ''
 
   response = '''<!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -350,6 +350,187 @@ def process_logfile(digest, htmlfile):
 <link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <style>
+/* Modern Design System */
+:root {
+  --primary: #00bfff;
+  --primary-dark: #0099cc;
+  --accent: #00ffcc;
+  --background: #0a0e1a;
+  --surface: #151922;
+  --surface-light: #1e2330;
+  --text: #ffffff;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --success: #10b981;
+  --error: #ef4444;
+  
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+  --gradient-surface: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(0, 191, 255, 0.2);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 255, 204, 0.1) 0%, transparent 50%);
+}
+
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Cards */
+.card {
+  background: var(--gradient-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-outline-primary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary);
+  color: var(--background);
+  transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--surface-light);
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+/* Alerts */
+.alert {
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  border: 1px solid;
+}
+
+.alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+/* Spinner */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+/* Code blocks */
+pre {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 1rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    margin-bottom: 0.5rem;
+  }
+}
+
 div.code code::before {
   content: counter(listing) ". ";
   display: inline-block;
@@ -638,18 +819,57 @@ return () => {
     <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
   </symbol>
 </svg>
-<div style="font-family:monospace" class="container-fluid">
-<h1 class="d-flex align-items-center" style="font-family:inherit;font-size:1.5rem;margin-top:1rem"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:32px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
-<p class="text-start">
-<a href="/klipper_logs">Home</a><br/>
-{expiration_line}
-<a href="/klipper_logs/{name}">Download klippy logfile</a><br/>
-{moonraker_line}
-{dmesg_line}
-{debug_line}
-{crownest_line}
-{telegram_line}
-</p><div class="card mb-3"><h5 class="card-header">Summary info</h5><div class="card-body" id="summary"><div class="card-child">Please wait, page is loading</div></div></div>'''
+<div class="container-fluid">
+<h1 class="d-flex align-items-center mb-4"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:40px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
+
+<div class="row mb-3">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Log Analysis</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>File:</strong> {name}</p>
+            {expiration_line}
+          </div>
+          <div class="col-md-6">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <a href="/klipper_logs" class="btn btn-outline-primary btn-sm">← Back to Home</a>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-12">
+            <div class="btn-group" role="group">
+              <a href="/klipper_logs/{name}" class="btn btn-outline-secondary btn-sm">Download klippy.log</a>
+              {moonraker_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download moonraker logfile</a><br/>', 'Download moonraker.log</a>')}
+              {dmesg_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download dmesg logfile</a><br/>', 'Download dmesg.log</a>')}
+              {debug_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download debug logfile</a><br/>', 'Download debug.log</a>')}
+              {crownest_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download crownest logfile</a><br/>', 'Download crownest.log</a>')}
+              {telegram_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download telegram logfile</a><br/>', 'Download telegram.log</a>')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">
+    <h5 class="mb-0">Summary Information</h5>
+  </div>
+  <div class="card-body" id="summary">
+    <div class="text-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Please wait, page is loading...</p>
+    </div>
+  </div>
+</div>'''
 
   if len(moonraker_info) > 0:
     response += add_collapse_start('Moonraker info')
@@ -1537,13 +1757,118 @@ def sizeof_fmt(num, suffix="B"):
 
 async def handle_list(request: web.Request) -> web.StreamResponse:
   response = '''<!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3Dwork - Klipper Log Parser</title>
 <link rel="icon" href="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" type="image/png">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+<style>
+/* Modern Design System - Same as above */
+:root {
+  --primary: #00bfff;
+  --primary-dark: #0099cc;
+  --accent: #00ffcc;
+  --background: #0a0e1a;
+  --surface: #151922;
+  --surface-light: #1e2330;
+  --text: #ffffff;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --success: #10b981;
+  --error: #ef4444;
+  
+  --gradient-primary: linear-gradient(135deg, var(--primary), var(--accent));
+  --gradient-surface: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(0, 191, 255, 0.2);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 255, 204, 0.1) 0%, transparent 50%);
+}
+
+.container-fluid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Cards */
+.card {
+  background: var(--gradient-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  transition: var(--transition);
+}
+
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--surface-light);
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding: 1rem;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn-group .btn {
+    margin-bottom: 0.5rem;
+  }
+}
+</style>
 </head>
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
@@ -1551,7 +1876,7 @@ async def handle_list(request: web.Request) -> web.StreamResponse:
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <body>
 <div class="container-fluid">
-<h1 class="d-flex align-items-center" style="font-size:1.5rem;margin-top:1rem"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:32px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
+<h1 class="d-flex align-items-center mb-4"><img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" alt="3Dwork" style="height:40px;margin-right:12px"><span>3Dwork - Klipper Log Parser</span></h1>
 '''
 
   files = [f for f in os.listdir('cache') if f.endswith('.log') and not '_' in f]

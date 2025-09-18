@@ -422,7 +422,7 @@
           <p class="card-description">Select your Klipper log files for analysis</p>
         </div>
         
-        <form method="POST" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
+        <form method="POST" action="/" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
           <div class="form-group">
             <label for="logfile" class="form-label">klippy.log file</label>
             <input class="form-input" type="file" id="logfile" name="logfile" accept=".log" required>
@@ -516,22 +516,23 @@
     }
 
     function handleSubmit(event) {
-      event.preventDefault();
-      
       const logfile = document.getElementById('logfile').files[0];
       const moonraker = document.getElementById('moonraker').files[0];
       const dmesg = document.getElementById('dmesg').files[0];
 
       if (!logfile || !moonraker || !dmesg) {
+        event.preventDefault();
         showToast('Please select all required files', 'error');
         return;
       }
 
-      // Here you would normally handle the file upload
-      showToast('Files uploaded successfully!');
+      // Show loading state
+      showToast('Uploading files...', 'info');
+      console.log('Form submitting to:', event.target.action);
+      console.log('Files:', { logfile: logfile?.name, moonraker: moonraker?.name, dmesg: dmesg?.name });
       
-      // Reset form
-      event.target.reset();
+      // Let the form submit naturally to the server
+      // The server will handle the upload and redirect
     }
 
     function updateContent(langData) {
