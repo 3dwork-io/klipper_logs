@@ -36,6 +36,20 @@ async function onLoad() {
       updateContent(langData);
 	}
   }
+
+  // Build domain-independent curl snippets
+  try {
+    const origin = window.location.origin;
+    const getlogsUrl = `${origin}/getlogs`;
+    const s1 = `curl -L ${getlogsUrl} | bash -s`;
+    const s2 = `curl -L ${getlogsUrl} | bash -s -- printer_1_data`;
+    const s3 = `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s`;
+    const s4 = `curl -L ${getlogsUrl} | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data`;
+    const e1 = document.getElementById('getlogs1'); if (e1) e1.textContent = s1;
+    const e2 = document.getElementById('getlogs2'); if (e2) e2.textContent = s2;
+    const e3 = document.getElementById('getlogs3'); if (e3) e3.textContent = s3;
+    const e4 = document.getElementById('getlogs4'); if (e4) e4.textContent = s4;
+  } catch (e) { console.warn('failed to set dynamic getlogs urls', e); }
 }
 
 </script>
