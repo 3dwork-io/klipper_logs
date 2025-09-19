@@ -1,12 +1,12 @@
 {
-"header": "3Dwork - Analizador de registros de Klipper",
-"title1": "Carga automática de registros<br>Ejecute el siguiente código en su host de Klipper para subirlos al analizador",
-"heading1": "Subir los registros más recientes desde la carpeta printer_data",
-"heading2": "Subir los registros más recientes desde una carpeta de datos de impresora diferente",
-"heading3": "Subir archivos de registro exactos desde la carpeta printer_data",
-"heading4": "Subir archivos de registro exactos desde una carpeta de datos de impresora diferente",
-"title2": "Carga manual de registros",
-"heading5": "Guardar el registro de dmesg en la carpeta printer_data/logs",
+"header": "3Dwork - Analizador de logs de Klipper",
+"title1": "Carga automática de logs...Ejecute el siguiente código en su host de Klipper para subirlos al analizador",
+"heading1": "Subir los logs más recientes desde la carpeta printer_data",
+"heading2": "Subir los logs más recientes desde una carpeta de datos de impresora diferente",
+"heading3": "Subir archivos de log exactos desde la carpeta printer_data",
+"heading4": "Subir archivos de log exactos desde una carpeta de datos de impresora diferente",
+"title2": "Carga manual de logs",
+"heading5": "Guardar el log de dmesg en la carpeta printer_data/logs",
 "copy-clipboard": "Copiar al portapapeles",
 "form-upload": "Subir"
 }

@@ -330,28 +330,31 @@
       <div class="logo-section">
         <img src="https://3dwork.io/wp-content/uploads/2025/09/cropped-image-removebg-preview-2.png" 
              alt="3Dwork" class="logo">
+
           <path d="M18 7h-2V5a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H6a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h1v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1a3 3 0 0 0 3-3v-5a3 3 0 0 0-3-3zM10 6h4v1h-4V6zm5 12H9v-3h6v3zm3-2a1 1 0 0 1-1 1h-1v-2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H7a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v5z"/>
         </svg>
       </div>
       
-      <h1 class="title">Klipper Log Parser</h1>
-      <p class="subtitle">
-        Modern tool for analyzing and debugging your 3D printer logs. 
-        Upload logs automatically or manually for comprehensive diagnostics.
-      </p>
+      <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+        <h1 class="title">3Dwork - Klipper Log Parser</h1>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <img id="flag-en" src="https://flagcdn.com/w20/gb.png" srcset="https://flagcdn.com/w40/gb.png 2x" width="20" height="15" alt="English" style="cursor:pointer; border-radius:3px;" title="English">
+          <img id="flag-es" src="https://flagcdn.com/w20/es.png" srcset="https://flagcdn.com/w40/es.png 2x" width="20" height="15" alt="Español" style="cursor:pointer; border-radius:3px;" title="Español">
+        </div>
+      </div>
+      <p class="subtitle" data-i18n="subtitle">Modern tool for analyzing and debugging your 3D printer logs. Upload logs automatically or manually for comprehensive diagnostics.</p>
     </header>
 
     <!-- Automatic Upload Section -->
     <section class="section">
-      <h2 class="section-title">Automatic Log Upload</h2>
-      <p class="section-description">
-        Run the commands below on your Klipper host to automatically upload logs for parsing
-      </p>
+      <h2 class="section-title" data-i18n="title1">Automatic logs uploading... Run code below on your klipper host to upload to parser</h2>
+      <p class="section-description" data-i18n="desc1">Run the commands below on your Klipper host to automatically upload logs for parsing</p>
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Upload Latest Logs</h3>
-          <p class="card-description">Upload the most recent logs from your printer_data folder</p>
+          <h3 class="card-title" data-i18n="heading1">Upload latest logs from printer_data folder</h3>
+          <p class="card-description" data-i18n="desc_card1">Upload the most recent logs from your printer_data folder</p>
+
         </div>
         <div class="code-container">
           <div class="code-block" id="getlogs1">curl -L https://example.com/getlogs | bash -s</div>
@@ -365,8 +368,9 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Upload from Custom Folder</h3>
-          <p class="card-description">Upload logs from a different printer data folder</p>
+          <h3 class="card-title" data-i18n="heading2">Upload latest logs from different printer data folder</h3>
+          <p class="card-description" data-i18n="desc_card2">Upload logs from a different printer data folder</p>
+
         </div>
         <div class="code-container">
           <div class="code-block" id="getlogs2">curl -L https://example.com/getlogs | bash -s -- printer_1_data</div>
@@ -380,8 +384,9 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Upload Specific Log Files</h3>
-          <p class="card-description">Upload exact log files by specifying their names</p>
+          <h3 class="card-title" data-i18n="heading3">Upload exact logs files from printer_data folder</h3>
+          <p class="card-description" data-i18n="desc_card3">Upload exact log files by specifying their names</p>
+
         </div>
         <div class="code-container">
           <div class="code-block" id="getlogs3">curl -L https://example.com/getlogs | KLIPPY=klippy.log.2023-12-19 MOONRAKER=moonraker.log.2023-12-19 bash -s</div>
@@ -395,8 +400,9 @@
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Upload Specific Files from Custom Folder</h3>
-          <p class="card-description">Upload specific log files from a different printer data folder</p>
+          <h3 class="card-title" data-i18n="heading4">Upload exact logs files from different printer data folder</h3>
+          <p class="card-description" data-i18n="desc_card4">Upload specific log files from a different printer data folder</p>
+
         </div>
         <div class="code-container">
           <div class="code-block" id="getlogs4">curl -L https://example.com/getlogs | KLIPPY=klippy.log.2023-12-18 MOONRAKER=moonraker.log.2023-12-18 bash -s -- printer_1_data</div>
@@ -411,36 +417,37 @@
 
     <!-- Manual Upload Section -->
     <section class="section">
-      <h2 class="section-title">Manual Log Upload</h2>
-      <p class="section-description">
-        Upload your log files directly through the web interface
-      </p>
+      <h2 class="section-title" data-i18n="title2">Manual logs uploading</h2>
+      <p class="section-description" data-i18n="desc2">Upload your log files directly through the web interface</p>
 
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Upload Log Files</h3>
-          <p class="card-description">Select your Klipper log files for analysis</p>
+          <h3 class="card-title" data-i18n="upload_title">Upload Log Files</h3>
+          <p class="card-description" data-i18n="upload_desc">Select your Klipper log files for analysis</p>
+
         </div>
         
         <form method="POST" action="/" enctype="multipart/form-data" onsubmit="handleSubmit(event)">
           <div class="form-group">
-            <label for="logfile" class="form-label">klippy.log file</label>
+            <label for="logfile" class="form-label" data-i18n="label_logfile">klippy.log file</label>
+
             <input class="form-input" type="file" id="logfile" name="logfile" accept=".log" required>
           </div>
           
           <div class="form-group">
-            <label for="moonraker" class="form-label">moonraker.log file</label>
+            <label for="moonraker" class="form-label" data-i18n="label_moonraker">moonraker.log file</label>
+
             <input class="form-input" type="file" id="moonraker" name="moonraker" accept=".log" required>
           </div>
           
           <div class="form-group">
-            <label for="dmesg" class="form-label">dmesg.txt file</label>
+            <label for="dmesg" class="form-label" data-i18n="label_dmesg">dmesg.txt file</label>
+
             <input class="form-input" type="file" id="dmesg" name="dmesg" accept=".txt" required>
           </div>
           
-          <button type="submit" class="btn btn-full">
-            Upload Files
-          </button>
+          <button type="submit" class="btn btn-full" data-i18n="btn_upload">Upload Files</button>
+
         </form>
       </div>
     </section>
@@ -449,8 +456,9 @@
     <section class="section">
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Generate dmesg Log</h3>
-          <p class="card-description">Save the system message log to your printer_data logs folder</p>
+          <h3 class="card-title" data-i18n="heading5">Save dmesg log file to printer_data logs folder</h3>
+          <p class="card-description" data-i18n="dmesg_desc">Save the system message log to your printer_data logs folder</p>
+
         </div>
         <div class="code-container">
           <div class="code-block" id="getlogs5">sudo dmesg -T > ~/printer_data/logs/dmesg.txt</div>
@@ -555,15 +563,24 @@
     }
 
     async function onLoad() {
-      const lang = (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase();
-      
-      if (lang !== 'en') {
-        console.log('Loading language:', lang);
-        const langData = await fetchLanguageData(lang);
-        if (langData) {
-          updateContent(langData);
-        }
-      }
+      // Restore language from localStorage or navigator
+      let saved = localStorage.getItem('ui_lang');
+      let lang = saved || (navigator.language || navigator.userLanguage).split('-')[0].toLowerCase();
+      if (lang !== 'en' && lang !== 'es') lang = 'en';
+      const langData = await fetchLanguageData(lang);
+      if (langData) updateContent(langData);
+
+      // Flag clicks
+      const enBtn = document.getElementById('flag-en');
+      const esBtn = document.getElementById('flag-es');
+      if (enBtn) enBtn.addEventListener('click', async () => {
+        const data = await fetchLanguageData('en');
+        if (data) { updateContent(data); localStorage.setItem('ui_lang', 'en'); }
+      });
+      if (esBtn) esBtn.addEventListener('click', async () => {
+        const data = await fetchLanguageData('es');
+        if (data) { updateContent(data); localStorage.setItem('ui_lang', 'es'); }
+      });
 
       // Build domain-independent curl snippets
       try {

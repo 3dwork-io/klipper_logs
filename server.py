@@ -546,6 +546,45 @@ div.code code::before {
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 <script>
+// i18n for digest page
+var currentLang = (localStorage.getItem('ui_lang') || (navigator.language||'en').split('-')[0]).toLowerCase();
+if (currentLang !== 'es') currentLang = 'en';
+var i18n = {
+  en: {
+    open_spoiler: 'Open spoiler',
+    close_spoiler: 'Close spoiler',
+    summary_information: 'Summary Information',
+    log_analysis: 'Log Analysis',
+    back_to_home: '← Back to Home',
+    loading: 'Loading...',
+    please_wait: 'Please wait, page is loading...',
+    printer_restarts: 'Printer restarts',
+    print_jobs: 'Print jobs',
+    count: 'Count',
+    last_run_errors: 'Last run errors',
+    last_config_errors: 'Last Config errors',
+    last_dmesg_errors: 'Last Dmesg errors',
+    last_printer_config: 'Last Printer Config'
+  },
+  es: {
+    open_spoiler: 'Abrir spoiler',
+    close_spoiler: 'Cerrar spoiler',
+    summary_information: 'Información de Resumen',
+    log_analysis: 'Análisis del Log',
+    back_to_home: '← Volver al inicio',
+    loading: 'Cargando...',
+    please_wait: 'Por favor espera, la página se está cargando...',
+    printer_restarts: 'Reinicios de impresora',
+    print_jobs: 'Trabajos de impresión',
+    count: 'Cantidad',
+    last_run_errors: 'Errores de la última ejecución',
+    last_config_errors: 'Errores de la última configuración',
+    last_dmesg_errors: 'Últimos errores de Dmesg',
+    last_printer_config: 'Última Configuración de la Impresora'
+  }
+};
+function t(key){ return (i18n[currentLang] && i18n[currentLang][key]) || key; }
+function setLang(lang){ currentLang = (lang==='es'?'es':'en'); localStorage.setItem('ui_lang', currentLang); try { onLoad(); } catch(e){} }
 function createHtml(html) {
   const template = document.createElement('template');
   template.innerHTML = html;
@@ -562,11 +601,11 @@ function collapseToggle(idx) {
   console.log(collapse);
 
   if (collapse.classList.contains('show')) {
-    cHeader.innerHTML = 'Open spoiler';
+    cHeader.innerHTML = t('open_spoiler');
     cFooter.innerHTML = '';
   } else {
-    cHeader.innerHTML = 'Close spoiler';
-    cFooter.innerHTML = 'Close spoiler';
+    cHeader.innerHTML = t('close_spoiler');
+    cFooter.innerHTML = t('close_spoiler');
   }
   bsCollapse.toggle();
 }
@@ -598,6 +637,16 @@ function onLoad() {
 
   const summary_node = document.getElementById("summary");
   summary_node.innerHTML = '';
+  // Apply i18n to static elements
+  try {
+    const la = document.getElementById('la_title'); if (la) la.textContent = t('log_analysis');
+    const bh = document.getElementById('back_home'); if (bh) bh.textContent = t('back_to_home');
+    const st = document.getElementById('summary_title'); if (st) st.textContent = t('summary_information');
+    const ld = document.getElementById('loading_text'); if (ld) ld.textContent = t('loading');
+    const pw = document.getElementById('please_wait_text'); if (pw) pw.textContent = t('please_wait');
+    const chs = document.querySelectorAll('[id^="collapseHeader"]');
+    chs.forEach(h => { if (h && h.classList.contains('collapsed')) { h.innerHTML = t('open_spoiler'); } });
+  } catch(e) {}
   if (summary.fuckups > 0) {
     const fuckups = createHtml(`<div class="card alert alert-danger">Unexpected restarts count: ${summary.fuckups}</div>`);
     summary_node.appendChild(fuckups);
@@ -613,7 +662,7 @@ function onLoad() {
   
   if (summary.restarts.length > 0) {
     const restarts_len = summary.restarts.length;
-    const rt_h = createHtml(`<div class="card mb-2 mt-2"><div style="transform: rotate(0);" class="card-header d-flex"><div>Printer restarts. Count: ${restarts_len}</div><a id="collapseHeaderRestarts" class="ms-auto stretched-link collapsed" href="javascript:void(0)" style="text-decoration:none" onclick="collapseToggle('Restarts')">Open spoiler</a></div></div>`);
+    const rt_h = createHtml(`<div class=\"card mb-2 mt-2\"><div style=\"transform: rotate(0);\" class=\"card-header d-flex\"><div>${t('printer_restarts')}. ${t('count')}: ${restarts_len}</div><a id=\"collapseHeaderRestarts\" class=\"ms-auto stretched-link collapsed\" href=\"javascript:void(0)\" style=\"text-decoration:none\" onclick=\"collapseToggle('Restarts')\">${t('open_spoiler')}</a></div></div>`);
     const rt_body = createHtml(`<div class="card-body collapse" id="collapseExampleRestarts"></div>`);
     for (let restart = 0; restart < summary.restarts.length; restart++) {
       const rt = createHtml(`<div><a href="#restart_${restart}">${summary.restarts[restart]}</a></div>`);
@@ -628,7 +677,7 @@ function onLoad() {
   
   if (summary.jobs.length > 0) {
     const jobs_len = summary.jobs.length;
-    const rt_h = createHtml(`<div class="card mb-2 mt-2"><div style="transform: rotate(0);" class="card-header d-flex"><div>Print jobs. Count: ${jobs_len}</div><a id="collapseHeaderJobs" class="ms-auto stretched-link collapsed" href="javascript:void(0)" style="text-decoration:none" onclick="collapseToggle('Jobs')">Open spoiler</a></div></div>`);
+    const rt_h = createHtml(`<div class=\"card mb-2 mt-2\"><div style=\"transform: rotate(0);\" class=\"card-header d-flex\"><div>${t('print_jobs')}. ${t('count')}: ${jobs_len}</div><a id=\"collapseHeaderJobs\" class=\"ms-auto stretched-link collapsed\" href=\"javascript:void(0)\" style=\"text-decoration:none\" onclick=\"collapseToggle('Jobs')\">${t('open_spoiler')}</a></div></div>`);
     const rt_body = createHtml(`<div class="card-body collapse" id="collapseExampleJobs"></div>`);
     for (let job = 0; job < summary.jobs.length; job++) {
       const rt = createHtml(`<div><a href="#collapseHeaderJob${job+1}">${summary.jobs[job]}</a></div>`);
@@ -642,7 +691,7 @@ function onLoad() {
   }
 
   if (summary.lastErrors.length > 0) {
-    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">Last run errors</h6></div>`);
+    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">${t('last_run_errors')}</h6></div>`);
     const lr_body = createHtml(`<div class="card-body"></div>`);
     for (const lastError in summary.lastErrors) {
       const err = summary.lastErrors[lastError];
@@ -654,7 +703,7 @@ function onLoad() {
   }
 
   if (summary.lastConfig.length > 0) {
-    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">Last Config errors</h6></div>`);
+    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">${t('last_config_errors')}</h6></div>`);
     const lr_body = createHtml(`<div class="card-body"></div>`);
     for (let lastConfig = 0; lastConfig < summary.lastConfig.length; lastConfig++) {
       const conf = summary.lastConfig[lastConfig];
@@ -666,7 +715,7 @@ function onLoad() {
   }
 
   if (summary.dmesg.length > 0) {
-    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">Last Dmesg errors</h6></div>`);
+    const lr_info = createHtml(`<div class="card mt-3"><h6 class="card-header">${t('last_dmesg_errors')}</h6></div>`);
     const lr_body = createHtml(`<div class="card-body"></div>`);
     for (let lastDmesg = 0; lastDmesg < summary.dmesg.length; lastDmesg++) {
       const conf = summary.dmesg[lastDmesg];
@@ -678,7 +727,7 @@ function onLoad() {
   }
 
   if (summary.config != '') {
-    const rt_h = createHtml(`<div class="card mb-2 mt-2"><div style="transform: rotate(0);" class="card-header d-flex"><div>Last Printer Config</div><a id="collapseHeaderConfig" class="ms-auto stretched-link collapsed" href="javascript:void(0)" style="text-decoration:none" onclick="collapseToggle('Config')">Open spoiler</a></div></div>`);
+    const rt_h = createHtml(`<div class="card mb-2 mt-2"><div style="transform: rotate(0);" class="card-header d-flex"><div>${t('last_printer_config')}</div><a id="collapseHeaderConfig" class="ms-auto stretched-link collapsed" href="javascript:void(0)" style="text-decoration:none" onclick="collapseToggle('Config')">${t('open_spoiler')}</a></div></div>`);
     const rt_body = createHtml(`<div class="card-body collapse" id="collapseExampleConfig"></div>`);
     const config_item = document.getElementById(`collapseExample${summary.config}`);
     rt_body.innerHTML = config_item.innerHTML;
@@ -708,6 +757,10 @@ root.utc = true;
 root.setThemes([
   am5themes_Animated.new(root)
 ]);
+// Dark UI: make texts readable (titles, labels, legend, etc.)
+try {
+  root.interfaceColors.set("text", am5.color(0xFFFFFF));
+} catch (e) {}
 const chart = root.container.children.push(am5xy.XYChart.new(root, {
   panX: true,
   panY: false,
@@ -723,6 +776,7 @@ chart.children.unshift(am5.Label.new(root, {
   textAlign: "center",
   x: am5.percent(50),
   paddingTop: -20,
+  fill: am5.color(0xFFFFFF)
 }));
 const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
   behavior: "none"
@@ -733,6 +787,10 @@ const xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
   renderer: am5xy.AxisRendererX.new(root, {}),
   tooltip: am5.Tooltip.new(root, {})
 }));
+// Style X axis
+xAxis.get("renderer").labels.template.setAll({ fill: am5.color(0xFFFFFF) });
+xAxis.get("renderer").grid.template.setAll({ stroke: am5.color(0x334155) });
+xAxis.get("renderer").ticks.template.setAll({ stroke: am5.color(0x94A3B8) });
 let opposite = false;
 for (const axis in keys) {
   const yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
@@ -740,12 +798,17 @@ for (const axis in keys) {
       opposite: opposite
     })
   }));
+  // Style Y axis
+  yAxis.get("renderer").labels.template.setAll({ fill: am5.color(0xFFFFFF) });
+  yAxis.get("renderer").grid.template.setAll({ stroke: am5.color(0x334155) });
+  yAxis.get("renderer").ticks.template.setAll({ stroke: am5.color(0x94A3B8) });
   opposite = !opposite;
   const yAxisLabel = am5.Label.new(root, {
     rotation: -90,
     text: axis,
     y: am5.p50,
-    centerX: am5.p50
+    centerX: am5.p50,
+    fill: am5.color(0xFFFFFF)
   })
   yAxis.children.unshift(
     yAxisLabel
@@ -765,6 +828,8 @@ for (const axis in keys) {
         labelText: "{name}: {valueY}"
       })
     }));
+    // Style tooltip text for dark background
+    try { series.get("tooltip").label.setAll({ fill: am5.color(0xFFFFFF) }); } catch (e) {}
     if (keyName.endsWith(':target')) {
       series.strokes.template.setAll({
         strokeDasharray: [10]
@@ -796,6 +861,9 @@ const legend = chart.bottomAxesContainer.children.push(
   })
 );
 legend.data.setAll(chart.series.values);
+// Style legend text
+legend.labels.template.setAll({ fill: am5.color(0xFFFFFF) });
+legend.valueLabels.template.setAll({ fill: am5.color(0xFFFFFF) });
 
 return () => {
   root.dispose()
@@ -826,7 +894,13 @@ return () => {
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h5 class="mb-0">Log Analysis</h5>
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="mb-0" id="la_title">Log Analysis</h5>
+          <div class="ms-auto d-flex align-items-center gap-2">
+            <img id="flag-en" src="https://flagcdn.com/w20/gb.png" srcset="https://flagcdn.com/w40/gb.png 2x" width="20" height="15" alt="English" style="cursor:pointer; border-radius:3px;" title="English" onclick="setLang('en')">
+            <img id="flag-es" src="https://flagcdn.com/w20/es.png" srcset="https://flagcdn.com/w40/es.png 2x" width="20" height="15" alt="Español" style="cursor:pointer; border-radius:3px;" title="Español" onclick="setLang('es')">
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div class="row">
@@ -836,7 +910,7 @@ return () => {
           </div>
           <div class="col-md-6">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <a href="/klipper_logs" class="btn btn-outline-primary btn-sm">← Back to Home</a>
+              <a href="/klipper_logs" class="btn btn-outline-primary btn-sm" id="back_home">← Back to Home</a>
             </div>
           </div>
         </div>
@@ -859,14 +933,14 @@ return () => {
 
 <div class="card mb-3">
   <div class="card-header">
-    <h5 class="mb-0">Summary Information</h5>
+    <h5 class="mb-0" id="summary_title">Summary Information</h5>
   </div>
   <div class="card-body" id="summary">
     <div class="text-center">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden" id="loading_text">Loading...</span>
       </div>
-      <p class="mt-2">Please wait, page is loading...</p>
+      <p class="mt-2" id="please_wait_text">Please wait, page is loading...</p>
     </div>
   </div>
 </div>'''
@@ -2176,6 +2250,13 @@ async def upload_log(request: web.Request) -> web.StreamResponse:
 
 def run(port=8998):
   logging.basicConfig(level=logging.INFO)
+  # Ensure relative paths (index.html, cache/, etc.) resolve correctly
+  try:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(script_dir)
+    logging.info(f"Changed working directory to {script_dir}")
+  except Exception as e:
+    logging.warning(f"Could not change working directory: {e}")
 
   app = web.Application()
   app.add_routes(

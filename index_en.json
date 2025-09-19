@@ -1,6 +1,6 @@
 {
 "header": "3Dwork - Klipper Log Parser",
-"title1": "Automatic logs uploading<br>Run code below on your klipper host to upload to parser",
+"title1": "Automatic logs uploading...Run code below on your klipper host to upload to parser",
 "heading1": "Upload latest logs from printer_data folder",
 "heading2": "Upload latest logs from different printer data folder",
 "heading3": "Upload exact logs files from printer_data folder",
