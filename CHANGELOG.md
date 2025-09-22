@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-09-22 — commit 8ab700d (https://github.com/3dwork-io/klipper_logs/commit/8ab700d0ecb22dc9cdbb8ed0e05a73e6119d5893)
+- (JJR3D) github fix
+- (JJR3D) Added example logs and fixed UI buttons for logs download
+
+
 ## 2025-09-22 — commit 6c4fd43 (https://github.com/3dwork-io/klipper_logs/commit/6c4fd431b82fee6f054bdd57b38dfbbee2b85ce8)
 - (JJR3D) Test
 
