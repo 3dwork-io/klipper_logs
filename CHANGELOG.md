@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-09-22 — commit 82c681c (https://github.com/3dwork-io/klipper_logs/commit/82c681c6bfd26306298f56728bff7dd16b5c9837)
+- (JJR3D) Merge branch 'master' of https://github.com/3dwork-io/klipper_logs
+- (JJR3D) action update
+
+
 ## 2025-09-22 — commit 8ab700d (https://github.com/3dwork-io/klipper_logs/commit/8ab700d0ecb22dc9cdbb8ed0e05a73e6119d5893)
 - (JJR3D) github fix
 - (JJR3D) Added example logs and fixed UI buttons for logs download
