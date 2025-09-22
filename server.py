@@ -313,33 +313,48 @@ def process_logfile(digest, htmlfile):
   moonraker_name = f'{digest}_moonraker.log'
   moonraker_file = os.path.join('cache', moonraker_name)
   moonraker_exists = os.path.exists(moonraker_file)
-  moonraker_line = f'<a href="/klipper_logs/{moonraker_name}">Download moonraker logfile</a><br/>' if moonraker_exists else ''
+  moonraker_line = (
+    f'<a href="/klipper_logs/{moonraker_name}" class="btn btn-outline-secondary btn-sm">Download moonraker.log</a>'
+    if moonraker_exists else ''
+  )
   
   moonraker_info = process_moonraker(moonraker_file) if moonraker_exists else []
 
   dmesg_name = f'{digest}_dmesg.log'
   dmesg_file = os.path.join('cache', dmesg_name)
   dmesg_exists = os.path.exists(dmesg_file)
-  dmesg_line = f'<a href="/klipper_logs/{dmesg_name}">Download dmesg logfile</a><br/>' if dmesg_exists else ''
+  dmesg_line = (
+    f'<a href="/klipper_logs/{dmesg_name}" class="btn btn-outline-secondary btn-sm">Download dmesg.log</a>'
+    if dmesg_exists else ''
+  )
 
   dmesg_info = process_dmesg(dmesg_file) if dmesg_exists else []
 
   debug_name = f'{digest}_debug.log'
   debug_file = os.path.join('cache', debug_name)
   debug_exists = os.path.exists(debug_file)
-  debug_line = f'<a href="/klipper_logs/{debug_name}">Download debug logfile</a><br/>' if debug_exists else ''
+  debug_line = (
+    f'<a href="/klipper_logs/{debug_name}" class="btn btn-outline-secondary btn-sm">Download debug.log</a>'
+    if debug_exists else ''
+  )
   
   debug_info = process_debug(debug_file) if debug_exists else []
 
   crownest_name = f'{digest}_crownest.log'
   crownest_file = os.path.join('cache', crownest_name)
   crownest_exists = os.path.exists(crownest_file)
-  crownest_line = f'<a href="/klipper_logs/{crownest_name}">Download crownest logfile</a><br/>' if crownest_exists else ''
+  crownest_line = (
+    f'<a href="/klipper_logs/{crownest_name}" class="btn btn-outline-secondary btn-sm">Download crownest.log</a>'
+    if crownest_exists else ''
+  )
 
   telegram_name = f'{digest}_telegram.log'
   telegram_file = os.path.join('cache', telegram_name)
   telegram_exists = os.path.exists(telegram_file)
-  telegram_line = f'<a href="/klipper_logs/{telegram_name}">Download telegram logfile</a><br/>' if telegram_exists else ''
+  telegram_line = (
+    f'<a href="/klipper_logs/{telegram_name}" class="btn btn-outline-secondary btn-sm">Download telegram.log</a>'
+    if telegram_exists else ''
+  )
 
   response = '''<!doctype html>
 <html lang="en">
@@ -918,11 +933,11 @@ return () => {
           <div class="col-12">
             <div class="btn-group" role="group">
               <a href="/klipper_logs/{name}" class="btn btn-outline-secondary btn-sm">Download klippy.log</a>
-              {moonraker_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download moonraker logfile</a><br/>', 'Download moonraker.log</a>')}
-              {dmesg_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download dmesg logfile</a><br/>', 'Download dmesg.log</a>')}
-              {debug_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download debug logfile</a><br/>', 'Download debug.log</a>')}
-              {crownest_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download crownest logfile</a><br/>', 'Download crownest.log</a>')}
-              {telegram_line.replace('<a href="/klipper_logs/', '<a href="/klipper_logs/').replace('Download telegram logfile</a><br/>', 'Download telegram.log</a>')}
+              {moonraker_line}
+              {dmesg_line}
+              {debug_line}
+              {crownest_line}
+              {telegram_line}
             </div>
           </div>
         </div>
